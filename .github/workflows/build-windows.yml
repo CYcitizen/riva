@@ -1,0 +1,36 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore WinSockPacketEditor.sln
+
+      - name: Build solution
+        run: msbuild WinSockPacketEditor.sln /p:Configuration=Release /p:Platform="Any CPU" /m
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinsockPacketEditor-Release
+          path: |
+            WinsockPacketEditor/bin/Release/**
+            WPELibrary/bin/Release/**
