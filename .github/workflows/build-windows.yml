@@ -29,6 +29,8 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "WPELibrary\x86" | Out-Null
           New-Item -ItemType Directory -Force -Path "WPELibrary\x64" | Out-Null
+          New-Item -ItemType Directory -Force -Path "WinsockPacketEditor\x86" | Out-Null
+          New-Item -ItemType Directory -Force -Path "WinsockPacketEditor\x64" | Out-Null
 
           $sqliteDlls = Get-ChildItem -Path "packages" -Recurse -Filter "SQLite.Interop.dll"
 
@@ -48,9 +50,12 @@ jobs:
 
           Copy-Item $x86Dll.FullName "WPELibrary\x86\SQLite.Interop.dll" -Force
           Copy-Item $x64Dll.FullName "WPELibrary\x64\SQLite.Interop.dll" -Force
+          Copy-Item $x86Dll.FullName "WinsockPacketEditor\x86\SQLite.Interop.dll" -Force
+          Copy-Item $x64Dll.FullName "WinsockPacketEditor\x64\SQLite.Interop.dll" -Force
 
           Write-Host "Copied x86 SQLite.Interop.dll from $($x86Dll.FullName)"
           Write-Host "Copied x64 SQLite.Interop.dll from $($x64Dll.FullName)"
+          Write-Host "Copied SQLite.Interop.dll files into WPELibrary and WinsockPacketEditor."
 
       - name: Build solution
         run: msbuild WinSockPacketEditor.sln /p:Configuration=Release /p:Platform="Any CPU" /p:SignManifests=false /p:GenerateManifests=false /p:ManifestCertificateThumbprint= /m
