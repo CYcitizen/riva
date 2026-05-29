@@ -24,6 +24,34 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore WinSockPacketEditor.sln
 
+      - name: Copy SQLite native interop DLLs
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "WPELibrary\x86" | Out-Null
+          New-Item -ItemType Directory -Force -Path "WPELibrary\x64" | Out-Null
+
+          $sqliteDlls = Get-ChildItem -Path "packages" -Recurse -Filter "SQLite.Interop.dll"
+
+          Write-Host "Found SQLite.Interop.dll files:"
+          $sqliteDlls | ForEach-Object { Write-Host $_.FullName }
+
+          $x86Dll = $sqliteDlls | Where-Object { $_.FullName -match "\\x86\\SQLite\.Interop\.dll$" } | Select-Object -First 1
+          $x64Dll = $sqliteDlls | Where-Object { $_.FullName -match "\\x64\\SQLite\.Interop\.dll$" } | Select-Object -First 1
+
+          if (-not $x86Dll) {
+            throw "Could not find x86 SQLite.Interop.dll in NuGet packages."
+          }
+
+          if (-not $x64Dll) {
+            throw "Could not find x64 SQLite.Interop.dll in NuGet packages."
+          }
+
+          Copy-Item $x86Dll.FullName "WPELibrary\x86\SQLite.Interop.dll" -Force
+          Copy-Item $x64Dll.FullName "WPELibrary\x64\SQLite.Interop.dll" -Force
+
+          Write-Host "Copied x86 SQLite.Interop.dll from $($x86Dll.FullName)"
+          Write-Host "Copied x64 SQLite.Interop.dll from $($x64Dll.FullName)"
+
       - name: Build solution
         run: msbuild WinSockPacketEditor.sln /p:Configuration=Release /p:Platform="Any CPU" /m
 
@@ -34,3 +62,4 @@ jobs:
           path: |
             WinsockPacketEditor/bin/Release/**
             WPELibrary/bin/Release/**
+            **/bin/Release/**
