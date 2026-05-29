@@ -53,7 +53,7 @@ jobs:
           Write-Host "Copied x64 SQLite.Interop.dll from $($x64Dll.FullName)"
 
       - name: Build solution
-        run: msbuild WinSockPacketEditor.sln /p:Configuration=Release /p:Platform="Any CPU" /m
+        run: msbuild WinSockPacketEditor.sln /p:Configuration=Release /p:Platform="Any CPU" /p:SignManifests=false /p:GenerateManifests=false /p:ManifestCertificateThumbprint= /m
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
