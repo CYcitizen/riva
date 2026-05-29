@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center">
 <p><img src="https://www.wpe64.com/web_images/wpe.png" height="150"></p>
 
@@ -102,3 +103,34 @@ WPE x64 supports direct injection into Windows processes to intercept Winsock pa
 本项目已加入 [dotNET China](https://gitee.com/dotnetchina)  组织。<br/>
 
 ![dotnetchina](https://images.gitee.com/uploads/images/2021/0324/120117_2da9922c_416720.png "132645_21007ea0_974299.png")
+=======
+# rivaCommit 1 line
+“Commit 1 line”
+Commit 2 line
+“提交 2 行”
+Commit 3 line
+“提交 3 行”
+Commit 4 line
+“Commit 4 line”
+Commit 5 line
+“提交 5 行”
+Commit 6 line
+“提交 6 行”
+Commit 7 line
+“Commit 7 line”
+Commit 8 line
+“提交 8 行”
+Commit 9 line
+“Commit 9 line”
+Commit 10 line
+“Commit 10 line”
+Commit 11 line
+“Commit 11 line”
+Commit 12 line
+“Commit 12 line”
+Commit 13 line
+“提交 13 行”
+Commit 14 line
+“Commit 14 line”
+Commit 15 line
+>>>>>>> 67d98ca21eed7d479dc3771f3810dc4f2b4db033
