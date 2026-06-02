@@ -14640,67 +14640,64 @@ function CZX_CheatGiveReward takes player p returns nothing
         set CZX_CheatVision[pid] = CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, bj_mapInitialPlayableArea, true, false)
         call FogModifierStart(CZX_CheatVision[pid])
     endif
-
-    call DisplayTextToPlayer(p, 0, 0, "-test: +1000 gold and full map vision enabled.")
 endfunction
 
-function CZX_CheatChatAction takes nothing returns nothing
-    call CZX_CheatGiveReward(GetTriggerPlayer())
-endfunction
-
-function CZX_CheatHandleUp takes nothing returns nothing
-    local player p = GetTriggerPlayer()
+function CZX_CheatHandleKey takes player p, integer key returns nothing
     local integer pid = GetPlayerId(p)
+    local integer step = CZX_CheatSeqStep[pid]
 
-    if CZX_CheatSeqStep[pid] == 0 then
+    if step == 0 and key == 0 then
         set CZX_CheatSeqStep[pid] = 1
-    elseif CZX_CheatSeqStep[pid] == 1 then
+    elseif step == 1 and key == 1 then
         set CZX_CheatSeqStep[pid] = 2
+    elseif step == 2 and key == 2 then
+        set CZX_CheatSeqStep[pid] = 3
+    elseif step == 3 and key == 0 then
+        set CZX_CheatSeqStep[pid] = 4
+    elseif step == 4 and key == 2 then
+        call CZX_CheatGiveReward(p)
+        set CZX_CheatSeqStep[pid] = 0
+    elseif key == 0 then
+        set CZX_CheatSeqStep[pid] = 1
     else
         set CZX_CheatSeqStep[pid] = 0
     endif
+endfunction
 
-    set p = null
+function CZX_CheatHandleLeft takes nothing returns nothing
+    call CZX_CheatHandleKey(GetTriggerPlayer(), 0)
 endfunction
 
 function CZX_CheatHandleDown takes nothing returns nothing
-    local player p = GetTriggerPlayer()
-    local integer pid = GetPlayerId(p)
+    call CZX_CheatHandleKey(GetTriggerPlayer(), 1)
+endfunction
 
-    if CZX_CheatSeqStep[pid] == 2 then
-        set CZX_CheatSeqStep[pid] = 3
-    elseif CZX_CheatSeqStep[pid] == 3 then
-        call CZX_CheatGiveReward(p)
-        set CZX_CheatSeqStep[pid] = 0
-    else
-        set CZX_CheatSeqStep[pid] = 0
-    endif
-
-    set p = null
+function CZX_CheatHandleRight takes nothing returns nothing
+    call CZX_CheatHandleKey(GetTriggerPlayer(), 2)
 endfunction
 
 function CZX_InitCustomCheatSystem takes nothing returns nothing
-    local trigger tChat = CreateTrigger()
-    local trigger tUp = CreateTrigger()
+    local trigger tLeft = CreateTrigger()
     local trigger tDown = CreateTrigger()
+    local trigger tRight = CreateTrigger()
     local integer i = 0
 
     loop
         exitwhen i >= bj_MAX_PLAYERS
-        call TriggerRegisterPlayerChatEvent(tChat, Player(i), "-test", true)
-        call TriggerRegisterPlayerEvent(tUp, Player(i), EVENT_PLAYER_ARROW_UP_DOWN)
+        call TriggerRegisterPlayerEvent(tLeft, Player(i), EVENT_PLAYER_ARROW_LEFT_DOWN)
         call TriggerRegisterPlayerEvent(tDown, Player(i), EVENT_PLAYER_ARROW_DOWN_DOWN)
+        call TriggerRegisterPlayerEvent(tRight, Player(i), EVENT_PLAYER_ARROW_RIGHT_DOWN)
         set CZX_CheatSeqStep[i] = 0
         set i = i + 1
     endloop
 
-    call TriggerAddAction(tChat, function CZX_CheatChatAction)
-    call TriggerAddAction(tUp, function CZX_CheatHandleUp)
+    call TriggerAddAction(tLeft, function CZX_CheatHandleLeft)
     call TriggerAddAction(tDown, function CZX_CheatHandleDown)
+    call TriggerAddAction(tRight, function CZX_CheatHandleRight)
 
-    set tChat = null
-    set tUp = null
+    set tLeft = null
     set tDown = null
+    set tRight = null
 endfunction
 function main takes nothing returns nothing
 call CZX_InitCustomCheatSystem()
